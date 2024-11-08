@@ -2,27 +2,41 @@
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
+#include <ctime>
 using namespace std;
 void gotoxy(int column, int line);
 struct Point {
     int x, y;
 };
+
 class CONRAN {
 public:
     struct Point A[100];
+    
     int DoDai;
+    Point Moi; 
     CONRAN() {
         DoDai = 3;
         A[0].x = 10; A[0].y = 10;
         A[1].x = 11; A[1].y = 10;
         A[2].x = 12; A[2].y = 10;
+        TaoMoi();
     }
     void Ve() {
         for (int i = 0; i < DoDai; i++) {
             gotoxy(A[i].x, A[i].y);
             cout << "X";
         }
+        
+
     }
+
+    void VeMoi() {
+        gotoxy(Moi.x, Moi.y);
+        cout << "O";
+    }
+
+
     void DiChuyen(int Huong) {
         for (int i = DoDai - 1; i > 0;i--)
             A[i] = A[i - 1];
@@ -30,12 +44,24 @@ public:
         if (Huong == 1) A[0].y = A[0].y + 1;
         if (Huong == 2) A[0].x = A[0].x - 1;
         if (Huong == 3) A[0].y = A[0].y - 1;
+        
+        if (A[0].x == Moi.x && A[0].y == Moi.y) {
+            DoDai++; 
+            TaoMoi(); 
+        }
 
     }
+
+    void TaoMoi() {
+        Moi.x = rand() % 20 + 1;
+        Moi.y = rand() % 20 + 1;
+    }
+
 };
 
 int main()
 {
+    srand(time(0)); 
     CONRAN r;
     int Huong = 0;
     char t;
@@ -50,6 +76,7 @@ int main()
         }
         system("cls");
         r.Ve();
+        r.VeMoi(); 
         r.DiChuyen(Huong);
         Sleep(300);
     }
