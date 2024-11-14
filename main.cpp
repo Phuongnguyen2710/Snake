@@ -5,7 +5,7 @@
 #include <ctime>
 using namespace std;
 
-class CONRAN; // Forward declaration
+class CONRAN; 
 void gotoxy(int column, int line);
 void TaoMoi(int &x_moi, int &y_moi, CONRAN &r);
 void xoacontro();
