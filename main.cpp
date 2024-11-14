@@ -7,9 +7,10 @@ using namespace std;
 
 class CONRAN; // Forward declaration
 void gotoxy(int column, int line);
-void TaoMoi(int &x_moi, int &y_moi, CONRAN &r);
+void TaoMoi(int& x_moi, int& y_moi, CONRAN& r);
 void xoacontro();
-bool check_ran_de_moi(CONRAN &r, int x_moi, int y_moi);  // Hàm kiểm tra mồi có trùng với rắn hay không
+void VeTuong();
+bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi);  // Hàm kiểm tra mồi có trùng với rắn hay không
 
 struct Point {
     int x, y;
@@ -33,14 +34,14 @@ public:
         cout << "O";
         for (int i = 1; i < DoDai; i++) {
             gotoxy(A[i].x, A[i].y);
-            cout << "X";  // In ký tự "-" để vẽ con rắn
+            cout << "-";  // In ký tự "-" để vẽ con rắn
         }
     }
 
-    void DiChuyen(int Huong, int &x_moi, int &y_moi, CONRAN &r) {
+    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r) {
         // Di chuyển con rắn và kiểm tra ăn mồi
         for (int i = DoDai - 1; i > 0; i--) {
-            A[i] = A[i - 1]; 
+            A[i] = A[i - 1];
         }
 
         // Cập nhật vị trí đầu con rắn theo hướng
@@ -54,28 +55,17 @@ public:
             DoDai++;  // Tăng độ dài con rắn
             TaoMoi(x_moi, y_moi, r);  // Gọi hàm TaoMoi để tạo mồi mới
         }
+
+        //Kiểm tra việc đụng tường
+        if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
+            system("cls");
+            cout << "Game Over!";
+            Sleep(2000);
+            exit(0);
+        }
+                
     }
 };
-
-void TaoMoi(int &x_moi, int &y_moi, CONRAN &r) {
-    do {
-        // Tạo tọa độ ngẫu nhiên cho mồi
-        x_moi = rand() % (99 - 11 + 1) + 11;
-        y_moi = rand() % (25 - 2 + 1) + 2;
-    } while (check_ran_de_moi(r, x_moi, y_moi));  // Kiểm tra xem mồi có trùng với vị trí con rắn không
-    gotoxy(x_moi, y_moi);
-    cout << "o"; 
-}
-
-bool check_ran_de_moi(CONRAN &r, int x_moi, int y_moi) {
-    // Kiểm tra mồi có trùng với các điểm trên thân rắn hay không
-    for (int i = 0; i < r.DoDai; i++) {
-        if (r.A[i].x == x_moi && r.A[i].y == y_moi) {
-            return true; 
-        }
-    }
-    return false; 
-}
 
 int main() {
     xoacontro();
@@ -85,13 +75,15 @@ int main() {
     char t;
 
     // Tạo mồi ban đầu
-    TaoMoi(x_moi, y_moi, r);  
+    TaoMoi(x_moi, y_moi, r);
+
+    VeTuong();
 
     while (1) {
-        if (kbhit()) {
-            t = getch();  // Nhận phím từ bàn phím
+        if (_kbhit()) {
+            t = _getch();  // Nhận phím từ bàn phím
             if (t == -32) {
-                t = getch();
+                t = _getch();
                 if (t == 75 && Huong != 0) Huong = 2; // Mũi tên trái
                 if (t == 72 && Huong != 1) Huong = 3; // Mũi tên lên
                 if (t == 77 && Huong != 2) Huong = 0; // Mũi tên phải
@@ -108,13 +100,34 @@ int main() {
         // Di chuyển con rắn và kiểm tra ăn mồi
         r.DiChuyen(Huong, x_moi, y_moi, r);
 
-        
+        // Vẽ lại con rắn ở vị trí mới
         r.Ve();
 
-        Sleep(50);  // Tốc độ di chuyển của con rắn
+
+        Sleep(100);  // Tốc độ di chuyển của con rắn
     }
 
     return 0;
+}
+
+void TaoMoi(int& x_moi, int& y_moi, CONRAN& r) {
+    do {
+        // Tạo tọa độ ngẫu nhiên cho mồi
+        x_moi = rand() % 99 + 1;
+        y_moi = rand() % 24 + 1;
+    } while (check_ran_de_moi(r, x_moi, y_moi));  // Kiểm tra xem mồi có trùng với vị trí con rắn không
+    gotoxy(x_moi, y_moi);
+    cout << "o";  // Hiển thị mồi
+}
+
+bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi) {
+    // Kiểm tra mồi có trùng với các điểm trên thân rắn hay không
+    for (int i = 0; i < r.DoDai; i++) {
+        if (r.A[i].x == x_moi && r.A[i].y == y_moi) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void xoacontro() {
@@ -122,6 +135,21 @@ void xoacontro() {
     Info.bVisible = FALSE;
     Info.dwSize = 20;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &Info);
+}
+
+void VeTuong() {
+    for (int i = 0; i <= 100; i++) {
+        gotoxy(i, 0);
+        cout << "#";
+        gotoxy(i, 25);
+        cout << "#";
+    }
+    for (int i = 0; i <= 25; i++) {
+        gotoxy(0, i);
+        cout << "#";
+        gotoxy(100, i);
+        cout << "#";
+    }
 }
 
 void gotoxy(int column, int line) {
