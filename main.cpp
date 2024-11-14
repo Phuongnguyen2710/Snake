@@ -33,7 +33,7 @@ public:
         cout << "O";
         for (int i = 1; i < DoDai; i++) {
             gotoxy(A[i].x, A[i].y);
-            cout << "-";  // In ký tự "-" để vẽ con rắn
+            cout << "X";  // In ký tự "-" để vẽ con rắn
         }
     }
 
@@ -64,7 +64,7 @@ void TaoMoi(int &x_moi, int &y_moi, CONRAN &r) {
         y_moi = rand() % (25 - 2 + 1) + 2;
     } while (check_ran_de_moi(r, x_moi, y_moi));  // Kiểm tra xem mồi có trùng với vị trí con rắn không
     gotoxy(x_moi, y_moi);
-    cout << "o";  // Hiển thị mồi
+    cout << "o"; 
 }
 
 bool check_ran_de_moi(CONRAN &r, int x_moi, int y_moi) {
@@ -108,11 +108,10 @@ int main() {
         // Di chuyển con rắn và kiểm tra ăn mồi
         r.DiChuyen(Huong, x_moi, y_moi, r);
 
-        // Vẽ lại con rắn ở vị trí mới
+        
         r.Ve();
 
-
-        Sleep(100);  // Tốc độ di chuyển của con rắn
+        Sleep(50);  // Tốc độ di chuyển của con rắn
     }
 
     return 0;
