@@ -10,7 +10,8 @@ void gotoxy(int column, int line);
 void TaoMoi(int& x_moi, int& y_moi, CONRAN& r);
 void xoacontro();
 void VeTuong();
-bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi);  // Hàm kiểm tra mồi có trùng với rắn hay không
+void NhapNhay(CONRAN& r);
+bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi);
 
 struct Point {
     int x, y;
@@ -24,8 +25,8 @@ public:
     CONRAN() {
         DoDai = 3;
         A[0].x = 8; A[0].y = 10;
-        A[1].x = 9; A[1].y = 10;
-        A[2].x = 10; A[2].y = 10;
+        A[1].x = 7; A[1].y = 10;
+        A[2].x = 6; A[2].y = 10;
     }
 
     void Ve() {
@@ -34,7 +35,8 @@ public:
         cout << "O";
         for (int i = 1; i < DoDai; i++) {
             gotoxy(A[i].x, A[i].y);
-            cout << "-";  // In ký tự "-" để vẽ con rắn
+            if (A[0].x == A[i].x && A[0].y == A[i].y) cout << "O";
+            else cout << "-";  // In ký tự "-" để vẽ con rắn
         }
     }
 
@@ -58,12 +60,23 @@ public:
 
         //Kiểm tra việc đụng tường
         if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
+            NhapNhay(r);
             system("cls");
-            cout << "Game Over!";
+            cout << "Game Over!" << endl;
             Sleep(2000);
             exit(0);
         }
-                
+
+        //Kiểm tra việc cắn trúng thân
+        for (int i = DoDai - 1; i > 0; i--) {
+            if (A[0].x == A[i].x && A[0].y == A[i].y) {
+                NhapNhay(r);
+                system("cls");
+                cout << "Game Over!" << endl;
+                Sleep(2000);
+                exit(0);
+            }
+        }
     }
 };
 
@@ -103,13 +116,23 @@ int main() {
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
 
-
-        Sleep(100);  // Tốc độ di chuyển của con rắn
+        // Tốc độ di chuyển của con rắn
+        Sleep(100);
     }
-
     return 0;
 }
 
+void NhapNhay(CONRAN& r) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < r.DoDai; j++) {
+            gotoxy(r.A[j].x, r.A[j].y);
+            cout << " ";
+        }
+        Sleep(500); 
+        r.Ve();
+        Sleep(500);
+    }
+}
 void TaoMoi(int& x_moi, int& y_moi, CONRAN& r) {
     do {
         // Tạo tọa độ ngẫu nhiên cho mồi
