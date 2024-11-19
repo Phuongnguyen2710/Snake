@@ -176,7 +176,7 @@ void ChonMucDoChoi(int& level) {
     if (level == 4) ChonCheDoChoi();
 }
 
-void CheDoCoDien(int& level, int& score, int& highscore) {
+void CheDoCoDien(int& Level, int& score, int& highscore) {
     xoacontro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
@@ -184,9 +184,9 @@ void CheDoCoDien(int& level, int& score, int& highscore) {
     char t;
 
     // Tạo tốc độ rắn theo từng mức độ
-    if (level == 1) r.TocDoRan = 200;
-    else if (level == 2) r.TocDoRan = 100;
-    else if (level == 3) r.TocDoRan = 50;
+    if (Level == 1) r.TocDoRan = 200;
+    else if (Level == 2) r.TocDoRan = 100;
+    else if (Level == 3) r.TocDoRan = 50;
 
     // Tạo mồi ban đầu
     TaoMoi(x_moi, y_moi, r);
@@ -212,7 +212,7 @@ void CheDoCoDien(int& level, int& score, int& highscore) {
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 1, level, score);
+        r.DiChuyen(Huong, x_moi, y_moi, r, 1, Level, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
@@ -228,7 +228,7 @@ void CheDoCoDien(int& level, int& score, int& highscore) {
     }
 }
 
-void CheDoTuDo(int& level, int& score, int& highscore) {
+void CheDoTuDo(int& Level, int& score, int& highscore) {
     xoacontro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
@@ -236,9 +236,9 @@ void CheDoTuDo(int& level, int& score, int& highscore) {
     char t;
 
     // Tạo tốc độ rắn theo từng mức độ
-    if (level == 1) r.TocDoRan = 200;
-    else if (level == 2) r.TocDoRan = 100;
-    else if (level == 3) r.TocDoRan = 50;
+    if (Level == 1) r.TocDoRan = 200;
+    else if (Level == 2) r.TocDoRan = 100;
+    else if (Level == 3) r.TocDoRan = 50;
 
     // Tạo mồi ban đầu
     TaoMoi(x_moi, y_moi, r);
@@ -264,7 +264,7 @@ void CheDoTuDo(int& level, int& score, int& highscore) {
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 2, level, score);
+        r.DiChuyen(Huong, x_moi, y_moi, r, 2, Level, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
