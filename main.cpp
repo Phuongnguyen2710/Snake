@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r, int Mode, int& score) {
+    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r, int Mode, int Level, int& score) {
         // Di chuyển con rắn và kiểm tra ăn mồi
         for (int i = DoDai - 1; i > 0; i--) {
             A[i] = A[i - 1];
@@ -73,9 +73,19 @@ public:
         // Kiểm tra nếu con rắn ăn mồi
         if (A[0].x == x_moi && A[0].y == y_moi) {
             DoDai++;  // Tăng độ dài con rắn
-            score++;  // Tăng điểm
             TaoMoi(x_moi, y_moi, r); // Gọi hàm TaoMoi để tạo mồi mới
             TocDoRan--; //Mỗi khi tăng chiều dài tốc độ rắn tăng dần
+            //Tính điểm
+            if (Mode == 1) {
+                if (Level == 1) score += 2;
+                else if (Level == 2) score += 4;
+                else if (Level == 3) score += 6;
+            }
+            else if (Mode == 2) {
+                if (Level == 1) score += 1;
+                else if (Level == 2) score += 2;
+                else if (Level == 3) score += 3;
+            }
         }
 
         // Kiểm tra việc đụng tường
@@ -202,7 +212,7 @@ void CheDoCoDien(int& level, int& score, int& highscore) {
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 1, score);
+        r.DiChuyen(Huong, x_moi, y_moi, r, 1, level, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
@@ -254,7 +264,7 @@ void CheDoTuDo(int& level, int& score, int& highscore) {
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 2, score);
+        r.DiChuyen(Huong, x_moi, y_moi, r, 2, level, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
