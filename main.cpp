@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
@@ -260,9 +260,9 @@ void CheDoTuDo(int& level, int& score, int& highscore) {
         r.Ve();
 
         // Hiển thị điểm ở ngoài khu vực sân chơi
-        gotoxy(2, 1);
+        gotoxy(102, 1);
         cout << "Score: " << score;
-        gotoxy(2, 2);
+        gotoxy(102, 2);
         cout << "Highscore: " << highscore;
 
         // Tốc độ di chuyển của con rắn
@@ -361,30 +361,30 @@ void ReadHighScore(int& highscore) {
     infile.close();
 }
 
-    void WriteHighScore(int highscore) {
-        ifstream infile("highscore.txt");
-        int currentHighScore;
+void WriteHighScore(int highscore) {
+    ifstream infile("highscore.txt");
+    int currentHighScore;
 
-        if (infile) {
-            infile >> currentHighScore;  // Đọc kỷ lục hiện tại từ file
-            infile.close();
+    if (infile) {
+        infile >> currentHighScore;  // Đọc kỷ lục hiện tại từ file
+        infile.close();
 
-            // So sánh điểm hiện tại với kỷ lục đã lưu
-            if (highscore > currentHighScore) {
-                // Hiển thị thông báo chúc mừng nếu phá kỷ lục
-                system("cls");
-                cout << "Chuc mung! Ban da pha ky luc voi so diem: " << highscore << "!" << endl;
-                Sleep(2000);  // Dừng lại 2 giây để người chơi xem thông báo
+        // So sánh điểm hiện tại với kỷ lục đã lưu
+        if (highscore > currentHighScore) {
+            // Hiển thị thông báo chúc mừng nếu phá kỷ lục
+            system("cls");
+            cout << "Chuc mung! Ban da pha ky luc voi so diem: " << highscore << "!" << endl;
+            Sleep(2000);  // Dừng lại 2 giây để người chơi xem thông báo
 
-                ofstream outfile("highscore.txt"); // Ghi đè tệp nếu có kỷ lục mới
-                outfile << highscore;
-                outfile.close();
-            }
-        }
-        else {
-            // Nếu tệp không tồn tại, tạo mới và ghi kỷ lục
-            ofstream outfile("highscore.txt");
+            ofstream outfile("highscore.txt"); // Ghi đè tệp nếu có kỷ lục mới
             outfile << highscore;
             outfile.close();
         }
     }
+    else {
+        // Nếu tệp không tồn tại, tạo mới và ghi kỷ lục
+        ofstream outfile("highscore.txt");
+        outfile << highscore;
+        outfile.close();
+    }
+}
