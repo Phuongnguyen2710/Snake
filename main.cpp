@@ -1,8 +1,9 @@
-#include <iostream>
+﻿#include <iostream>
 #include <windows.h>
 #include <cstdlib>
 #include <conio.h>
 #include <ctime>
+#include <fstream>  // For file handling
 using namespace std;
 
 class CONRAN; // Forward declaration
@@ -12,14 +13,13 @@ void xoacontro();
 void VeTuong(int Mode);
 void NhapNhay(CONRAN& r);
 void MenuBatDauChoi();
-void CheDoCoDien(int& level);
-<<<<<<< HEAD
-=======
-void CheDoTuDo(int& level);
->>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
+void CheDoCoDien(int& level, int& score, int& highscore);
+void CheDoTuDo(int& level, int& score, int& highscore);
 void ChonCheDoChoi();
 void ChonMucDoChoi(int& level);
 bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi);
+void ReadHighScore(int& highscore);
+void WriteHighScore(int highscore);
 
 struct Point {
     int x, y;
@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r, int Mode) {
+    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r, int Mode, int& score) {
         // Di chuyển con rắn và kiểm tra ăn mồi
         for (int i = DoDai - 1; i > 0; i--) {
             A[i] = A[i - 1];
@@ -62,49 +62,42 @@ public:
         if (Huong == 2) A[0].x = A[0].x - 1; // Trái
         if (Huong == 3) A[0].y = A[0].y - 1; // Lên
 
-        if (Mode == 2)
-        {
+        if (Mode == 2) {
             if (A[0].x > 100) A[0].x = 0;
             else if (A[0].x < 0) A[0].x = 100;
             if (A[0].y > 25) A[0].y = 0;
             else if (A[0].y < 0) A[0].y = 25;
             VeTuong(2);
         }
+
         // Kiểm tra nếu con rắn ăn mồi
         if (A[0].x == x_moi && A[0].y == y_moi) {
             DoDai++;  // Tăng độ dài con rắn
+            score++;  // Tăng điểm
             TaoMoi(x_moi, y_moi, r); // Gọi hàm TaoMoi để tạo mồi mới
             TocDoRan--; //Mỗi khi tăng chiều dài tốc độ rắn tăng dần
         }
 
-        //Kiểm tra việc đụng tường
-<<<<<<< HEAD
-        if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
-            NhapNhay(r);
-            system("cls");
-            cout << "Game Over!" << endl;
-            Sleep(2000);
-            MenuBatDauChoi();
-=======
-        if (Mode == 1)
-        {
+        // Kiểm tra việc đụng tường
+        if (Mode == 1) {
             if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
                 NhapNhay(r);
                 system("cls");
                 cout << "Game Over!" << endl;
                 Sleep(2000);
+                WriteHighScore(score);  // Cập nhật điểm cao nếu cần
                 MenuBatDauChoi();
             }
->>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
         }
 
-        //Kiểm tra việc cắn trúng thân
+        // Kiểm tra việc cắn trúng thân
         for (int i = DoDai - 1; i > 0; i--) {
             if (A[0].x == A[i].x && A[0].y == A[i].y) {
                 NhapNhay(r);
                 system("cls");
                 cout << "Game Over!" << endl;
                 Sleep(2000);
+                WriteHighScore(score);  // Cập nhật điểm cao nếu cần
                 MenuBatDauChoi();
             }
         }
@@ -118,7 +111,7 @@ int main() {
 
 void MenuBatDauChoi() {
     int choose = 0;
-    cout << "WECOME TO SNAKE GAME" << endl;
+    cout << "WELCOME TO SNAKE GAME" << endl;
     cout << "-----------------------------------------------------------" << endl;
     cout << "1. Start" << endl;
     cout << "2. Quit" << endl;
@@ -134,9 +127,9 @@ void MenuBatDauChoi() {
     }
 }
 
-void ChonCheDoChoi()
-{
-    int choose = 0, level = 0;
+void ChonCheDoChoi() {
+    int choose = 0, level = 0, score = 0, highscore = 0;
+    ReadHighScore(highscore);  // Đọc điểm cao từ file
     cout << "PLEASE CHOOSE GAME MODE" << endl;
     cout << "-----------------------------------------------------------" << endl;
     cout << "1. Classic Mode" << endl;
@@ -147,18 +140,12 @@ void ChonCheDoChoi()
     if (choose == 1) {
         system("cls");
         ChonMucDoChoi(level);
-        CheDoCoDien(level);
+        CheDoCoDien(level, score, highscore);
     }
-<<<<<<< HEAD
-    else if (choose == 1) {
-        system("cls");
-        //CheDoCoDien();
-=======
     else if (choose == 2) {
         system("cls");
         ChonMucDoChoi(level);
-        CheDoTuDo(level);
->>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
+        CheDoTuDo(level, score, highscore);
     }
     else {
         system("cls");
@@ -166,8 +153,7 @@ void ChonCheDoChoi()
     }
 }
 
-void ChonMucDoChoi(int& level)
-{
+void ChonMucDoChoi(int& level) {
     cout << "PLEASE CHOOSE GAME LEVEL" << endl;
     cout << "-----------------------------------------------------------" << endl;
     cout << "1. Easy" << endl;
@@ -180,15 +166,14 @@ void ChonMucDoChoi(int& level)
     if (level == 4) ChonCheDoChoi();
 }
 
-void CheDoCoDien(int& level)
-{
+void CheDoCoDien(int& level, int& score, int& highscore) {
     xoacontro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
     int Huong = 0, x_moi = 0, y_moi = 0;
     char t;
 
-    //Tạo tốc độ rắn theo từng mức độ
+    // Tạo tốc độ rắn theo từng mức độ
     if (level == 1) r.TocDoRan = 200;
     else if (level == 2) r.TocDoRan = 100;
     else if (level == 3) r.TocDoRan = 50;
@@ -217,27 +202,30 @@ void CheDoCoDien(int& level)
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 1);
+        r.DiChuyen(Huong, x_moi, y_moi, r, 1, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
+
+        // Hiển thị điểm ở ngoài khu vực sân chơi
+        gotoxy(102, 1);
+        cout << "Score: " << score;
+        gotoxy(102, 2);
+        cout << "Highscore: " << highscore;
 
         // Tốc độ di chuyển của con rắn
         Sleep(r.TocDoRan);
     }
 }
-<<<<<<< HEAD
-=======
 
-void CheDoTuDo(int& level)
-{
+void CheDoTuDo(int& level, int& score, int& highscore) {
     xoacontro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
     int Huong = 0, x_moi = 0, y_moi = 0;
     char t;
 
-    //Tạo tốc độ rắn theo từng mức độ
+    // Tạo tốc độ rắn theo từng mức độ
     if (level == 1) r.TocDoRan = 200;
     else if (level == 2) r.TocDoRan = 100;
     else if (level == 3) r.TocDoRan = 50;
@@ -266,16 +254,22 @@ void CheDoTuDo(int& level)
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 2);
+        r.DiChuyen(Huong, x_moi, y_moi, r, 2, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
+
+        // Hiển thị điểm ở ngoài khu vực sân chơi
+        gotoxy(2, 1);
+        cout << "Score: " << score;
+        gotoxy(2, 2);
+        cout << "Highscore: " << highscore;
 
         // Tốc độ di chuyển của con rắn
         Sleep(r.TocDoRan);
     }
 }
->>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
+
 void NhapNhay(CONRAN& r) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < r.DoDai; j++) {
@@ -330,8 +324,7 @@ void VeTuong(int Mode) {
             cout << "#";
         }
     }
-    else
-    {
+    else {
         for (int i = 0; i <= 100; i++) {
             gotoxy(i, 0);
             cout << "-";
@@ -356,3 +349,42 @@ void gotoxy(int column, int line) {
         coord
     );
 }
+
+void ReadHighScore(int& highscore) {
+    ifstream infile("highscore.txt");
+    if (infile) {
+        infile >> highscore;
+    }
+    else {
+        highscore = 0;  // Default highscore if file does not exist
+    }
+    infile.close();
+}
+
+    void WriteHighScore(int highscore) {
+        ifstream infile("highscore.txt");
+        int currentHighScore;
+
+        if (infile) {
+            infile >> currentHighScore;  // Đọc kỷ lục hiện tại từ file
+            infile.close();
+
+            // So sánh điểm hiện tại với kỷ lục đã lưu
+            if (highscore > currentHighScore) {
+                // Hiển thị thông báo chúc mừng nếu phá kỷ lục
+                system("cls");
+                cout << "Chuc mung! Ban da pha ky luc voi so diem: " << highscore << "!" << endl;
+                Sleep(2000);  // Dừng lại 2 giây để người chơi xem thông báo
+
+                ofstream outfile("highscore.txt"); // Ghi đè tệp nếu có kỷ lục mới
+                outfile << highscore;
+                outfile.close();
+            }
+        }
+        else {
+            // Nếu tệp không tồn tại, tạo mới và ghi kỷ lục
+            ofstream outfile("highscore.txt");
+            outfile << highscore;
+            outfile.close();
+        }
+    }
