@@ -9,10 +9,14 @@ class CONRAN; // Forward declaration
 void gotoxy(int column, int line);
 void TaoMoi(int& x_moi, int& y_moi, CONRAN& r);
 void xoacontro();
-void VeTuong();
+void VeTuong(int Mode);
 void NhapNhay(CONRAN& r);
 void MenuBatDauChoi();
 void CheDoCoDien(int& level);
+<<<<<<< HEAD
+=======
+void CheDoTuDo(int& level);
+>>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
 void ChonCheDoChoi();
 void ChonMucDoChoi(int& level);
 bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi);
@@ -46,7 +50,7 @@ public:
         }
     }
 
-    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r) {
+    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r, int Mode) {
         // Di chuyển con rắn và kiểm tra ăn mồi
         for (int i = DoDai - 1; i > 0; i--) {
             A[i] = A[i - 1];
@@ -58,6 +62,14 @@ public:
         if (Huong == 2) A[0].x = A[0].x - 1; // Trái
         if (Huong == 3) A[0].y = A[0].y - 1; // Lên
 
+        if (Mode == 2)
+        {
+            if (A[0].x > 100) A[0].x = 0;
+            else if (A[0].x < 0) A[0].x = 100;
+            if (A[0].y > 25) A[0].y = 0;
+            else if (A[0].y < 0) A[0].y = 25;
+            VeTuong(2);
+        }
         // Kiểm tra nếu con rắn ăn mồi
         if (A[0].x == x_moi && A[0].y == y_moi) {
             DoDai++;  // Tăng độ dài con rắn
@@ -66,12 +78,24 @@ public:
         }
 
         //Kiểm tra việc đụng tường
+<<<<<<< HEAD
         if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
             NhapNhay(r);
             system("cls");
             cout << "Game Over!" << endl;
             Sleep(2000);
             MenuBatDauChoi();
+=======
+        if (Mode == 1)
+        {
+            if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
+                NhapNhay(r);
+                system("cls");
+                cout << "Game Over!" << endl;
+                Sleep(2000);
+                MenuBatDauChoi();
+            }
+>>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
         }
 
         //Kiểm tra việc cắn trúng thân
@@ -125,9 +149,16 @@ void ChonCheDoChoi()
         ChonMucDoChoi(level);
         CheDoCoDien(level);
     }
+<<<<<<< HEAD
     else if (choose == 1) {
         system("cls");
         //CheDoCoDien();
+=======
+    else if (choose == 2) {
+        system("cls");
+        ChonMucDoChoi(level);
+        CheDoTuDo(level);
+>>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
     }
     else {
         system("cls");
@@ -165,7 +196,7 @@ void CheDoCoDien(int& level)
     // Tạo mồi ban đầu
     TaoMoi(x_moi, y_moi, r);
 
-    VeTuong();
+    VeTuong(1);
 
     while (1) {
         if (_kbhit()) {
@@ -186,7 +217,7 @@ void CheDoCoDien(int& level)
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r);
+        r.DiChuyen(Huong, x_moi, y_moi, r, 1);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
@@ -195,13 +226,63 @@ void CheDoCoDien(int& level)
         Sleep(r.TocDoRan);
     }
 }
+<<<<<<< HEAD
+=======
+
+void CheDoTuDo(int& level)
+{
+    xoacontro();
+    srand(time(0)); // Khởi tạo seed cho hàm rand
+    CONRAN r;
+    int Huong = 0, x_moi = 0, y_moi = 0;
+    char t;
+
+    //Tạo tốc độ rắn theo từng mức độ
+    if (level == 1) r.TocDoRan = 200;
+    else if (level == 2) r.TocDoRan = 100;
+    else if (level == 3) r.TocDoRan = 50;
+
+    // Tạo mồi ban đầu
+    TaoMoi(x_moi, y_moi, r);
+
+    VeTuong(2);
+
+    while (1) {
+        if (_kbhit()) {
+            t = _getch();  // Nhận phím từ bàn phím
+            if (t == -32) {
+                t = _getch();
+                if (t == 75 && Huong != 0) Huong = 2; // Mũi tên trái
+                if (t == 72 && Huong != 1) Huong = 3; // Mũi tên lên
+                if (t == 77 && Huong != 2) Huong = 0; // Mũi tên phải
+                if (t == 80 && Huong != 3) Huong = 1; // Mũi tên xuống
+            }
+        }
+
+        // Xóa con rắn cũ
+        for (int i = 0; i < r.DoDai; i++) {
+            gotoxy(r.A[i].x, r.A[i].y);
+            cout << " "; // Xóa phần thân cũ của con rắn
+        }
+
+        // Di chuyển con rắn và kiểm tra ăn mồi
+        r.DiChuyen(Huong, x_moi, y_moi, r, 2);
+
+        // Vẽ lại con rắn ở vị trí mới
+        r.Ve();
+
+        // Tốc độ di chuyển của con rắn
+        Sleep(r.TocDoRan);
+    }
+}
+>>>>>>> 1af19ac22bd2a4f19c2d64d248867a5876cfac70
 void NhapNhay(CONRAN& r) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < r.DoDai; j++) {
             gotoxy(r.A[j].x, r.A[j].y);
             cout << " ";
         }
-        Sleep(500); 
+        Sleep(500);
         r.Ve();
         Sleep(500);
     }
@@ -234,18 +315,35 @@ void xoacontro() {
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &Info);
 }
 
-void VeTuong() {
-    for (int i = 0; i <= 100; i++) {
-        gotoxy(i, 0);
-        cout << "#";
-        gotoxy(i, 25);
-        cout << "#";
+void VeTuong(int Mode) {
+    if (Mode == 1) {
+        for (int i = 0; i <= 100; i++) {
+            gotoxy(i, 0);
+            cout << "#";
+            gotoxy(i, 25);
+            cout << "#";
+        }
+        for (int i = 0; i <= 25; i++) {
+            gotoxy(0, i);
+            cout << "#";
+            gotoxy(100, i);
+            cout << "#";
+        }
     }
-    for (int i = 0; i <= 25; i++) {
-        gotoxy(0, i);
-        cout << "#";
-        gotoxy(100, i);
-        cout << "#";
+    else
+    {
+        for (int i = 0; i <= 100; i++) {
+            gotoxy(i, 0);
+            cout << "-";
+            gotoxy(i, 25);
+            cout << "-";
+        }
+        for (int i = 0; i <= 25; i++) {
+            gotoxy(0, i);
+            cout << "|";
+            gotoxy(100, i);
+            cout << "|";
+        }
     }
 }
 
