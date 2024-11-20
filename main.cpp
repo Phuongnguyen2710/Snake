@@ -3,24 +3,32 @@
 #include <cstdlib>
 #include <conio.h>
 #include <ctime>
+#include <vector>
+#include <algorithm>
 #include <fstream>  // For file handling
 #pragma comment(lib, "Winmm.lib") // Chỉ định liên kết thư viện Winmm.lib
 using namespace std;
 
-class CONRAN; // Forward declaration
+// Forward declaration
+struct Point;
+struct HighScoreEntry;
+class CONRAN; 
+
 void gotoxy(int column, int line);
 void TaoMoi(int& x_moi, int& y_moi, CONRAN& r);
 void XoaConTro();
 void VeTuong(int Mode);
 void NhapNhay(CONRAN& r);
 void MenuBatDauChoi();
-void CheDoCoDien(int& level, int& score, int& highscore);
-void CheDoTuDo(int& level, int& score, int& highscore);
+void CheDoCoDien(int& level, int& score, vector<HighScoreEntry>& highscore);
+void CheDoTuDo(int& level, int& score, vector<HighScoreEntry>& highscore);
 void ChonCheDoChoi();
 void ChonMucDoChoi(int& level);
 bool CheckRanDeMoi(CONRAN& r, int x_moi, int y_moi);
-void ReadHighScore(int& highscore);
-void WriteHighScore(int highscore);
+void ReadHighScore(vector<HighScoreEntry>& highScores);
+void WriteHighScore(vector<HighScoreEntry>& highScores);
+void AddNewScore(int score);
+void DisplayHighScore(int x, int y);
 void PlayEatSound();
 void PlayGameOverSound();
 
@@ -100,7 +108,7 @@ public:
 				system("cls");
 				cout << "Game Over!" << endl;
 				Sleep(2000);
-				WriteHighScore(score);  // Cập nhật điểm cao nếu cần
+				AddNewScore(score);  // Cập nhật điểm cao nếu cần
 				MenuBatDauChoi();
 			}
 		}
@@ -113,11 +121,16 @@ public:
 				system("cls");
 				cout << "Game Over!" << endl;
 				Sleep(2000);
-				WriteHighScore(score);  // Cập nhật điểm cao nếu cần
+				AddNewScore(score);  // Cập nhật điểm cao nếu cần
 				MenuBatDauChoi();
 			}
 		}
 	}
+};
+
+struct HighScoreEntry {
+	int score=0;
+	string name="None";
 };
 
 int main() {
@@ -146,7 +159,8 @@ void MenuBatDauChoi() {
 }
 
 void ChonCheDoChoi() {
-	int choose = 0, level = 0, score = 0, highscore = 0;
+	int choose = 0, level = 0, score = 0;
+	vector<HighScoreEntry> highscore;
 	ReadHighScore(highscore);  // Đọc điểm cao từ file
 	cout << "PLEASE CHOOSE GAME MODE" << endl;
 	cout << "-----------------------------------------------------------" << endl;
@@ -184,7 +198,7 @@ void ChonMucDoChoi(int& level) {
 	if (level == 4) ChonCheDoChoi();
 }
 
-void CheDoCoDien(int& Level, int& score, int& highscore) {
+void CheDoCoDien(int& Level, int& score, vector<HighScoreEntry>& highscore) {
 	XoaConTro();
 	srand(time(0)); // Khởi tạo seed cho hàm rand
 	CONRAN r;
@@ -225,18 +239,19 @@ void CheDoCoDien(int& Level, int& score, int& highscore) {
 		// Vẽ lại con rắn ở vị trí mới
 		r.Ve();
 
-		// Hiển thị điểm ở ngoài khu vực sân chơi
+		// Hiển thị điểm hiện tại
 		gotoxy(102, 1);
 		cout << "Score: " << score;
-		gotoxy(102, 2);
-		cout << "Highscore: " << highscore;
+
+		// Hiển thị điểm cao nhất
+		DisplayHighScore(102, 2);
 
 		// Tốc độ di chuyển của con rắn
 		Sleep(r.TocDoRan);
 	}
 }
 
-void CheDoTuDo(int& Level, int& score, int& highscore) {
+void CheDoTuDo(int& Level, int& score, vector<HighScoreEntry>& highscore) {
 	XoaConTro();
 	srand(time(0)); // Khởi tạo seed cho hàm rand
 	CONRAN r;
@@ -277,11 +292,12 @@ void CheDoTuDo(int& Level, int& score, int& highscore) {
 		// Vẽ lại con rắn ở vị trí mới
 		r.Ve();
 
-		// Hiển thị điểm ở ngoài khu vực sân chơi
+		// Hiển thị điểm hiện tại
 		gotoxy(102, 1);
 		cout << "Score: " << score;
-		gotoxy(102, 2);
-		cout << "Highscore: " << highscore;
+
+		// Hiển thị điểm cao nhất
+		DisplayHighScore(102, 2);
 
 		// Tốc độ di chuyển của con rắn
 		Sleep(r.TocDoRan);
@@ -368,44 +384,76 @@ void gotoxy(int column, int line) {
 	);
 }
 
-void ReadHighScore(int& highscore) {
+
+// Hàm đọc danh sách top 10 điểm số
+void ReadHighScore(vector<HighScoreEntry>& highScores) {
 	ifstream infile("highscore.txt");
 	if (infile) {
-		infile >> highscore;
-	}
-	else {
-		highscore = 0;  // Default highscore if file does not exist
+		HighScoreEntry entry;
+		while (infile >> entry.name >> entry.score) {
+			highScores.push_back(entry);
+		}
 	}
 	infile.close();
 }
 
-void WriteHighScore(int highscore) {
-	ifstream infile("highscore.txt");
-	int currentHighScore;
-
-	if (infile) {
-		infile >> currentHighScore;  // Đọc kỷ lục hiện tại từ file
-		infile.close();
-
-		// So sánh điểm hiện tại với kỷ lục đã lưu
-		if (highscore > currentHighScore) {
-			// Hiển thị thông báo chúc mừng nếu phá kỷ lục
-			system("cls");
-			cout << "Chuc mung! Ban da pha ky luc voi so diem: " << highscore << "!" << endl;
-			Sleep(2000);  // Dừng lại 2 giây để người chơi xem thông báo
-
-			ofstream outfile("highscore.txt"); // Ghi đè tệp nếu có kỷ lục mới
-			outfile << highscore;
-			outfile.close();
-		}
+// Hàm ghi danh sách top 10 điểm số
+void WriteHighScore(vector<HighScoreEntry>& highScores) {
+	ofstream outfile("highscore.txt");
+	for (const auto& entry : highScores) {
+		outfile << entry.name << " " << entry.score << endl;
 	}
-	else {
-		// Nếu tệp không tồn tại, tạo mới và ghi kỷ lục
-		ofstream outfile("highscore.txt");
-		outfile << highscore;
-		outfile.close();
+	outfile.close();
+}
+
+// Hàm thêm điểm mới vào bảng xếp hạng
+void AddNewScore(int score) {
+	vector<HighScoreEntry> highScores;
+	ReadHighScore(highScores);
+
+	// Hiển thị thông báo nếu điểm mới lọt top 10
+	if (highScores.size() < 10 || score > highScores.back().score) {
+		system("cls");
+		cout << "Chuc mung! Ban da dat diem cao voi so diem: " << score << "!" << endl;
+		cout << "Nhap ten cua ban (toi da 10 ky tu): ";
+		string name;
+		cin >> name;
+		if (name.size() > 10) {
+			name = name.substr(0, 10); // Giới hạn tên tối đa 10 ký tự
+		}
+
+		// Thêm điểm mới vào danh sách
+		highScores.push_back({ score, name });
+
+		// Sắp xếp danh sách theo điểm số giảm dần
+		sort(highScores.begin(), highScores.end(), [](const HighScoreEntry& a, const HighScoreEntry& b) {
+			return a.score > b.score;
+			});
+
+		// Giữ lại top 10
+		if (highScores.size() > 10) {
+			highScores.pop_back();
+		}
+
+		// Ghi lại danh sách mới vào file
+		WriteHighScore(highScores);
 	}
 }
+
+void DisplayHighScore(int x, int y) {
+	// Đọc danh sách điểm cao từ file
+	vector<HighScoreEntry> highScores;
+	ReadHighScore(highScores);
+
+	// Lấy điểm cao nhất và tên tương ứng
+	int highscore = (highScores.empty()) ? 0 : highScores.front().score;
+	string highscoreName = (highScores.empty()) ? "None" : highScores.front().name;
+
+	// Hiển thị điểm cao nhất
+	gotoxy(x, y);
+	cout << "Highscore: " << highscore << " (" << highscoreName << ")";
+}
+
 
 void PlayEatSound() {
 	PlaySound(TEXT("eatFood.wav"), NULL, SND_FILENAME | SND_ASYNC);
