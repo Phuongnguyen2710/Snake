@@ -7,19 +7,19 @@
 using namespace std;
 
 class CONRAN; // Forward declaration
-void gotoxy(int column, int line);
+void GoToXY(int column, int line);
 void TaoMoi(int& x_moi, int& y_moi, CONRAN& r);
-void xoacontro();
-void VeTuong(int Mode);
+void XoaConTro();
+void VeTuong(int gameMode);
 void NhapNhay(CONRAN& r);
 void MenuBatDauChoi();
 void CheDoCoDien(int& level, int& score, int& highscore);
 void CheDoTuDo(int& level, int& score, int& highscore);
 void ChonCheDoChoi();
 void ChonMucDoChoi(int& level);
-bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi);
-void ReadHighScore(int& highscore);
-void WriteHighScore(int highscore);
+bool CheckRanDeMoi(CONRAN& r, int x_moi, int y_moi);
+void DocDiemCao(int& highscore);
+void VietDiemCao(int highscore);
 
 struct Point {
     int x, y;
@@ -41,28 +41,28 @@ public:
 
     void Ve() {
         // Vẽ con rắn ở các vị trí mới
-        gotoxy(A[0].x, A[0].y);
+        GoToXY(A[0].x, A[0].y);
         cout << "O";
         for (int i = 1; i < DoDai; i++) {
-            gotoxy(A[i].x, A[i].y);
+            GoToXY(A[i].x, A[i].y);
             if (A[0].x == A[i].x && A[0].y == A[i].y) cout << "O";
             else cout << "-";  // In ký tự "-" để vẽ con rắn
         }
     }
 
-    void DiChuyen(int Huong, int& x_moi, int& y_moi, CONRAN& r, int Mode, int Level, int& score) {
+    void DiChuyen(int direction, int& x_moi, int& y_moi, CONRAN& r, int gameMode, int level, int& score) {
         // Di chuyển con rắn và kiểm tra ăn mồi
         for (int i = DoDai - 1; i > 0; i--) {
             A[i] = A[i - 1];
         }
 
         // Cập nhật vị trí đầu con rắn theo hướng
-        if (Huong == 0) A[0].x = A[0].x + 1; // Phải
-        if (Huong == 1) A[0].y = A[0].y + 1; // Xuống
-        if (Huong == 2) A[0].x = A[0].x - 1; // Trái
-        if (Huong == 3) A[0].y = A[0].y - 1; // Lên
+        if (direction == 0) A[0].x = A[0].x + 1; // Phải
+        if (direction == 1) A[0].y = A[0].y + 1; // Xuống
+        if (direction == 2) A[0].x = A[0].x - 1; // Trái
+        if (direction == 3) A[0].y = A[0].y - 1; // Lên
 
-        if (Mode == 2) {
+        if (gameMode == 2) {
             if (A[0].x > 100) A[0].x = 0;
             else if (A[0].x < 0) A[0].x = 100;
             if (A[0].y > 25) A[0].y = 0;
@@ -76,26 +76,26 @@ public:
             TaoMoi(x_moi, y_moi, r); // Gọi hàm TaoMoi để tạo mồi mới
             TocDoRan--; //Mỗi khi tăng chiều dài tốc độ rắn tăng dần
             //Tính điểm
-            if (Mode == 1) {
-                if (Level == 1) score += 2;
-                else if (Level == 2) score += 4;
-                else if (Level == 3) score += 6;
+            if (gameMode == 1) {
+                if (level == 1) score += 2;
+                else if (level == 2) score += 4;
+                else if (level == 3) score += 6;
             }
-            else if (Mode == 2) {
-                if (Level == 1) score += 1;
-                else if (Level == 2) score += 2;
-                else if (Level == 3) score += 3;
+            else if (gameMode == 2) {
+                if (level == 1) score += 1;
+                else if (level == 2) score += 2;
+                else if (level == 3) score += 3;
             }
         }
 
         // Kiểm tra việc đụng tường
-        if (Mode == 1) {
+        if (gameMode == 1) {
             if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
                 NhapNhay(r);
                 system("cls");
                 cout << "Game Over!" << endl;
                 Sleep(2000);
-                WriteHighScore(score);  // Cập nhật điểm cao nếu cần
+                VietDiemCao(score);  // Cập nhật điểm cao nếu cần
                 MenuBatDauChoi();
             }
         }
@@ -107,7 +107,7 @@ public:
                 system("cls");
                 cout << "Game Over!" << endl;
                 Sleep(2000);
-                WriteHighScore(score);  // Cập nhật điểm cao nếu cần
+                VietDiemCao(score);  // Cập nhật điểm cao nếu cần
                 MenuBatDauChoi();
             }
         }
@@ -139,8 +139,8 @@ void MenuBatDauChoi() {
 
 void ChonCheDoChoi() {
     int choose = 0, level = 0, score = 0, highscore = 0;
-    ReadHighScore(highscore);  // Đọc điểm cao từ file
-    cout << "PLEASE CHOOSE GAME MODE" << endl;
+    DocDiemCao(highscore);  // Đọc điểm cao từ file
+    cout << "PLEASE CHOOSE GAME Mode" << endl;
     cout << "-----------------------------------------------------------" << endl;
     cout << "1. Classic Mode" << endl;
     cout << "2. Free Mode" << endl;
@@ -164,7 +164,7 @@ void ChonCheDoChoi() {
 }
 
 void ChonMucDoChoi(int& level) {
-    cout << "PLEASE CHOOSE GAME LEVEL" << endl;
+    cout << "PLEASE CHOOSE GAME level" << endl;
     cout << "-----------------------------------------------------------" << endl;
     cout << "1. Easy" << endl;
     cout << "2. Medium" << endl;
@@ -176,17 +176,17 @@ void ChonMucDoChoi(int& level) {
     if (level == 4) ChonCheDoChoi();
 }
 
-void CheDoCoDien(int& Level, int& score, int& highscore) {
-    xoacontro();
+void CheDoCoDien(int& level, int& score, int& highscore) {
+    XoaConTro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
-    int Huong = 0, x_moi = 0, y_moi = 0;
+    int direction = 0, x_moi = 0, y_moi = 0;
     char t;
 
     // Tạo tốc độ rắn theo từng mức độ
-    if (Level == 1) r.TocDoRan = 200;
-    else if (Level == 2) r.TocDoRan = 100;
-    else if (Level == 3) r.TocDoRan = 50;
+    if (level == 1) r.TocDoRan = 200;
+    else if (level == 2) r.TocDoRan = 100;
+    else if (level == 3) r.TocDoRan = 50;
 
     // Tạo mồi ban đầu
     TaoMoi(x_moi, y_moi, r);
@@ -198,29 +198,29 @@ void CheDoCoDien(int& Level, int& score, int& highscore) {
             t = _getch();  // Nhận phím từ bàn phím
             if (t == -32) {
                 t = _getch();
-                if (t == 75 && Huong != 0) Huong = 2; // Mũi tên trái
-                if (t == 72 && Huong != 1) Huong = 3; // Mũi tên lên
-                if (t == 77 && Huong != 2) Huong = 0; // Mũi tên phải
-                if (t == 80 && Huong != 3) Huong = 1; // Mũi tên xuống
+                if (t == 75 && direction != 0) direction = 2; // Mũi tên trái
+                if (t == 72 && direction != 1) direction = 3; // Mũi tên lên
+                if (t == 77 && direction != 2) direction = 0; // Mũi tên phải
+                if (t == 80 && direction != 3) direction = 1; // Mũi tên xuống
             }
         }
 
         // Xóa con rắn cũ
         for (int i = 0; i < r.DoDai; i++) {
-            gotoxy(r.A[i].x, r.A[i].y);
+            GoToXY(r.A[i].x, r.A[i].y);
             cout << " "; // Xóa phần thân cũ của con rắn
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 1, Level, score);
+        r.DiChuyen(direction, x_moi, y_moi, r, 1, level, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
 
         // Hiển thị điểm ở ngoài khu vực sân chơi
-        gotoxy(102, 1);
+        GoToXY(102, 1);
         cout << "Score: " << score;
-        gotoxy(102, 2);
+        GoToXY(102, 2);
         cout << "Highscore: " << highscore;
 
         // Tốc độ di chuyển của con rắn
@@ -228,17 +228,17 @@ void CheDoCoDien(int& Level, int& score, int& highscore) {
     }
 }
 
-void CheDoTuDo(int& Level, int& score, int& highscore) {
-    xoacontro();
+void CheDoTuDo(int& level, int& score, int& highscore) {
+    XoaConTro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
-    int Huong = 0, x_moi = 0, y_moi = 0;
+    int direction = 0, x_moi = 0, y_moi = 0;
     char t;
 
     // Tạo tốc độ rắn theo từng mức độ
-    if (Level == 1) r.TocDoRan = 200;
-    else if (Level == 2) r.TocDoRan = 100;
-    else if (Level == 3) r.TocDoRan = 50;
+    if (level == 1) r.TocDoRan = 200;
+    else if (level == 2) r.TocDoRan = 100;
+    else if (level == 3) r.TocDoRan = 50;
 
     // Tạo mồi ban đầu
     TaoMoi(x_moi, y_moi, r);
@@ -250,29 +250,29 @@ void CheDoTuDo(int& Level, int& score, int& highscore) {
             t = _getch();  // Nhận phím từ bàn phím
             if (t == -32) {
                 t = _getch();
-                if (t == 75 && Huong != 0) Huong = 2; // Mũi tên trái
-                if (t == 72 && Huong != 1) Huong = 3; // Mũi tên lên
-                if (t == 77 && Huong != 2) Huong = 0; // Mũi tên phải
-                if (t == 80 && Huong != 3) Huong = 1; // Mũi tên xuống
+                if (t == 75 && direction != 0) direction = 2; // Mũi tên trái
+                if (t == 72 && direction != 1) direction = 3; // Mũi tên lên
+                if (t == 77 && direction != 2) direction = 0; // Mũi tên phải
+                if (t == 80 && direction != 3) direction = 1; // Mũi tên xuống
             }
         }
 
         // Xóa con rắn cũ
         for (int i = 0; i < r.DoDai; i++) {
-            gotoxy(r.A[i].x, r.A[i].y);
+            GoToXY(r.A[i].x, r.A[i].y);
             cout << " "; // Xóa phần thân cũ của con rắn
         }
 
         // Di chuyển con rắn và kiểm tra ăn mồi
-        r.DiChuyen(Huong, x_moi, y_moi, r, 2, Level, score);
+        r.DiChuyen(direction, x_moi, y_moi, r, 2, level, score);
 
         // Vẽ lại con rắn ở vị trí mới
         r.Ve();
 
         // Hiển thị điểm ở ngoài khu vực sân chơi
-        gotoxy(102, 1);
+        GoToXY(102, 1);
         cout << "Score: " << score;
-        gotoxy(102, 2);
+        GoToXY(102, 2);
         cout << "Highscore: " << highscore;
 
         // Tốc độ di chuyển của con rắn
@@ -283,7 +283,7 @@ void CheDoTuDo(int& Level, int& score, int& highscore) {
 void NhapNhay(CONRAN& r) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < r.DoDai; j++) {
-            gotoxy(r.A[j].x, r.A[j].y);
+            GoToXY(r.A[j].x, r.A[j].y);
             cout << " ";
         }
         Sleep(500);
@@ -297,12 +297,12 @@ void TaoMoi(int& x_moi, int& y_moi, CONRAN& r) {
         // Tạo tọa độ ngẫu nhiên cho mồi
         x_moi = rand() % 99 + 1;
         y_moi = rand() % 24 + 1;
-    } while (check_ran_de_moi(r, x_moi, y_moi));  // Kiểm tra xem mồi có trùng với vị trí con rắn không
-    gotoxy(x_moi, y_moi);
+    } while (CheckRanDeMoi(r, x_moi, y_moi));  // Kiểm tra xem mồi có trùng với vị trí con rắn không
+    GoToXY(x_moi, y_moi);
     cout << "o";  // Hiển thị mồi
 }
 
-bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi) {
+bool CheckRanDeMoi(CONRAN& r, int x_moi, int y_moi) {
     // Kiểm tra mồi có trùng với các điểm trên thân rắn hay không
     for (int i = 0; i < r.DoDai; i++) {
         if (r.A[i].x == x_moi && r.A[i].y == y_moi) {
@@ -312,45 +312,45 @@ bool check_ran_de_moi(CONRAN& r, int x_moi, int y_moi) {
     return false;
 }
 
-void xoacontro() {
+void XoaConTro() {
     CONSOLE_CURSOR_INFO Info;
     Info.bVisible = FALSE;
     Info.dwSize = 20;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &Info);
 }
 
-void VeTuong(int Mode) {
-    if (Mode == 1) {
+void VeTuong(int gameMode) {
+    if (gameMode == 1) {
         for (int i = 0; i <= 100; i++) {
-            gotoxy(i, 0);
+            GoToXY(i, 0);
             cout << "#";
-            gotoxy(i, 25);
+            GoToXY(i, 25);
             cout << "#";
         }
         for (int i = 0; i <= 25; i++) {
-            gotoxy(0, i);
+            GoToXY(0, i);
             cout << "#";
-            gotoxy(100, i);
+            GoToXY(100, i);
             cout << "#";
         }
     }
     else {
         for (int i = 0; i <= 100; i++) {
-            gotoxy(i, 0);
+            GoToXY(i, 0);
             cout << "-";
-            gotoxy(i, 25);
+            GoToXY(i, 25);
             cout << "-";
         }
         for (int i = 0; i <= 25; i++) {
-            gotoxy(0, i);
+            GoToXY(0, i);
             cout << "|";
-            gotoxy(100, i);
+            GoToXY(100, i);
             cout << "|";
         }
     }
 }
 
-void gotoxy(int column, int line) {
+void GoToXY(int column, int line) {
     COORD coord;
     coord.X = column;
     coord.Y = line;
@@ -360,7 +360,7 @@ void gotoxy(int column, int line) {
     );
 }
 
-void ReadHighScore(int& highscore) {
+void DocDiemCao(int& highscore) {
     ifstream infile("highscore.txt");
     if (infile) {
         infile >> highscore;
@@ -371,7 +371,7 @@ void ReadHighScore(int& highscore) {
     infile.close();
 }
 
-void WriteHighScore(int highscore) {
+void VietDiemCao(int highscore) {
     ifstream infile("highscore.txt");
     int currentHighScore;
 
