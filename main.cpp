@@ -1,9 +1,10 @@
-﻿#include <iostream>
-#include <windows.h>
+﻿#include <windows.h>
+#include <iostream>
 #include <cstdlib>
 #include <conio.h>
 #include <ctime>
 #include <fstream>  // For file handling
+#pragma comment(lib, "Winmm.lib") // Chỉ định liên kết thư viện Winmm.lib
 using namespace std;
 
 class CONRAN; // Forward declaration
@@ -20,6 +21,8 @@ void ChonMucDoChoi(int& level);
 bool CheckRanDeMoi(CONRAN& r, int x_moi, int y_moi);
 void DocDiemCao(int& highscore);
 void VietDiemCao(int highscore);
+void PlayEatSound();
+void PlayGameOverSound();
 
 struct Point {
     int x, y;
@@ -72,6 +75,7 @@ public:
 
         // Kiểm tra nếu con rắn ăn mồi
         if (A[0].x == x_moi && A[0].y == y_moi) {
+            PlayEatSound();
             DoDai++;  // Tăng độ dài con rắn
             TaoMoi(x_moi, y_moi, r); // Gọi hàm TaoMoi để tạo mồi mới
             TocDoRan--; //Mỗi khi tăng chiều dài tốc độ rắn tăng dần
@@ -91,6 +95,7 @@ public:
         // Kiểm tra việc đụng tường
         if (gameMode == 1) {
             if (A[0].x == 0 || A[0].x == 100 || A[0].y == 0 || A[0].y == 25) {
+                PlayGameOverSound();
                 NhapNhay(r);
                 system("cls");
                 cout << "Game Over!" << endl;
@@ -103,6 +108,7 @@ public:
         // Kiểm tra việc cắn trúng thân
         for (int i = DoDai - 1; i > 0; i--) {
             if (A[0].x == A[i].x && A[0].y == A[i].y) {
+                PlayGameOverSound();
                 NhapNhay(r);
                 system("cls");
                 cout << "Game Over!" << endl;
@@ -116,6 +122,7 @@ public:
 
 int main() {
     MenuBatDauChoi();
+    Beep(1000, 200);
     return 0;
 }
 
@@ -337,15 +344,15 @@ void VeTuong(int gameMode) {
     else {
         for (int i = 0; i <= 100; i++) {
             GoToXY(i, 0);
-            cout << "-";
+            cout << ".";
             GoToXY(i, 25);
-            cout << "-";
+            cout << ".";
         }
         for (int i = 0; i <= 25; i++) {
             GoToXY(0, i);
-            cout << "|";
+            cout << ".";
             GoToXY(100, i);
-            cout << "|";
+            cout << ".";
         }
     }
 }
@@ -397,4 +404,11 @@ void VietDiemCao(int highscore) {
         outfile << highscore;
         outfile.close();
     }
+}
+void PlayEatSound() {
+    PlaySound(TEXT("eatFood.wav"), NULL, SND_FILENAME | SND_ASYNC);
+}
+
+void PlayGameOverSound() {
+    PlaySound(TEXT("endGame.wav"), NULL, SND_FILENAME | SND_ASYNC);
 }
