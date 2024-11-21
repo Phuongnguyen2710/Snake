@@ -21,7 +21,7 @@
 - Điều khiển con rắn bằng các phím mũi tên (trái, phải, lên, xuống).
 - Mồi xuất hiện ngẫu nhiên trong cửa sổ console.
 - Con rắn sẽ tăng độ dài khi ăn mồi.
-- Giao diện đồ họa đơn giản với ký tự "-".
+- Các game mode: Free mode, xuyên tường
 - Cung cấp trải nghiệm thú vị và thử thách cho người chơi.
 
 ## Cài Đặt
