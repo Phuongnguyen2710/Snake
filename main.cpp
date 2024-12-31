@@ -31,15 +31,7 @@ void ThemDiemCao(int score);
 void HienThiDiemCao(int x, int y);
 void AmThanhAnMoi();
 void AmThanhThuaCuoc();
-void DemNguocBatDau() {    // Hàm hiển thị đếm ngược
-    for (int i = 3; i > 0; i--) {
-        system("cls");
-        GoToXY(50, 12);  // Đặt vị trí hiển thị ở giữa màn hình
-        cout << "Starting in: " << i;
-        Sleep(1000);  // Tạm dừng 1 giây
-    }
-    system("cls");
-}
+void DemNguocBatDau();
 
 struct Point {
     int x, y;
@@ -477,4 +469,14 @@ void AmThanhAnMoi() {
 
 void AmThanhThuaCuoc() {
     PlaySound(TEXT("endGame.wav"), NULL, SND_FILENAME | SND_ASYNC);
+}
+
+void DemNguocBatDau() {    // Hàm hiển thị đếm ngược
+    for (int i = 3; i > 0; i--) {
+        system("cls");
+        GoToXY(50, 12);  // Đặt vị trí hiển thị ở giữa màn hình
+        cout << "Starting in: " << i;
+        Sleep(1000);  // Tạm dừng 1 giây
+    }
+    system("cls");
 }
