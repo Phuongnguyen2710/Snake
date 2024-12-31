@@ -1,4 +1,4 @@
-﻿#include <windows.h>
+#include <windows.h>
 #include <iostream>
 #include <cstdlib>
 #include <conio.h>
@@ -169,23 +169,34 @@ void ChonCheDoChoi() {
     cout << "3. Back" << endl;
     cout << "You choose: ";
     cin >> choose;
-    switch (choose) {
-        case 1:
+
+    try {
+        if (choose == 1) {
             system("cls");
             ChonMucDoChoi(level);
             CheDoCoDien(level, score, highscore);
-            break;
-    
-        case 2:
+        }
+        else if (choose == 2) {
             system("cls");
             ChonMucDoChoi(level);
             CheDoTuDo(level, score, highscore);
-            break;
-    
-        default:
+        }
+        else {
             system("cls");
             MenuBatDauChoi();
-            break;
+        }
+    } catch (const exception& e) {
+        system("cls");
+        cout << "An error occurred: " << e.what() << endl;
+        cout << "Returning to main menu..." << endl;
+        Sleep(2000); // Đợi 2 giây để người dùng đọc lỗi
+        MenuBatDauChoi();
+    } catch (...) {
+        system("cls");
+        cout << "An unknown error occurred." << endl;
+        cout << "Returning to main menu..." << endl;
+        Sleep(2000); // Đợi 2 giây để người dùng đọc lỗi
+        MenuBatDauChoi();
     }
 }
 
