@@ -168,18 +168,32 @@ void ChonCheDoChoi() {
     cout << "3. Back" << endl;
     cout << "You choose: ";
     cin >> choose;
-    if (choose == 1) {
+    try {
+        if (choose == 1) {
+            system("cls");
+            ChonMucDoChoi(level);
+            CheDoCoDien(level, score, highscore);
+        }
+        else if (choose == 2) {
+            system("cls");
+            ChonMucDoChoi(level);
+            CheDoTuDo(level, score, highscore);
+        }
+        else {
+            system("cls");
+            MenuBatDauChoi();
+        }
+    } catch (const exception& e) {
         system("cls");
-        ChonMucDoChoi(level);
-        CheDoCoDien(level, score, highscore);
-    }
-    else if (choose == 2) {
+        cout << "An error occurred: " << e.what() << endl;
+        cout << "Returning to main menu..." << endl;
+        Sleep(2000); // Đợi 2 giây để người dùng đọc lỗi
+        MenuBatDauChoi();
+    } catch (...) {
         system("cls");
-        ChonMucDoChoi(level);
-        CheDoTuDo(level, score, highscore);
-    }
-    else {
-        system("cls");
+        cout << "An unknown error occurred." << endl;
+        cout << "Returning to main menu..." << endl;
+        Sleep(2000); // Đợi 2 giây để người dùng đọc lỗi
         MenuBatDauChoi();
     }
 }
