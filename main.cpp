@@ -322,13 +322,13 @@ void CheDoTuDo(int& level, int& score, vector<HighScoreEntry>& highscore) {
 }
 
 void NhapNhay(CONRAN& r) {
-    for (int i = 0; i < 3; i++) {
+    bool visible = true;
+    for (int i = 0; i < 6; i++) {
         for (int j = 0; j < r.DoDai; j++) {
             GoToXY(r.A[j].x, r.A[j].y);
-            cout << " ";
+            cout << (visible ? " " : "O");
         }
-        Sleep(500);
-        r.Ve();
+        visible = !visible;
         Sleep(500);
     }
 }
