@@ -31,6 +31,15 @@ void ThemDiemCao(int score);
 void HienThiDiemCao(int x, int y);
 void AmThanhAnMoi();
 void AmThanhThuaCuoc();
+void DemNguocBatDau() {    // Hàm hiển thị đếm ngược
+    for (int i = 3; i > 0; i--) {
+        system("cls");
+        GoToXY(50, 12);  // Đặt vị trí hiển thị ở giữa màn hình
+        cout << "Starting in: " << i;
+        Sleep(1000);  // Tạm dừng 1 giây
+    }
+    system("cls");
+}
 
 struct Point {
     int x, y;
@@ -168,19 +177,23 @@ void ChonCheDoChoi() {
     cout << "3. Back" << endl;
     cout << "You choose: ";
     cin >> choose;
-    if (choose == 1) {
-        system("cls");
-        ChonMucDoChoi(level);
-        CheDoCoDien(level, score, highscore);
-    }
-    else if (choose == 2) {
-        system("cls");
-        ChonMucDoChoi(level);
-        CheDoTuDo(level, score, highscore);
-    }
-    else {
-        system("cls");
-        MenuBatDauChoi();
+    switch (choose) {
+        case 1:
+            system("cls");
+            ChonMucDoChoi(level);
+            CheDoCoDien(level, score, highscore);
+            break;
+    
+        case 2:
+            system("cls");
+            ChonMucDoChoi(level);
+            CheDoTuDo(level, score, highscore);
+            break;
+    
+        default:
+            system("cls");
+            MenuBatDauChoi();
+            break;
     }
 }
 
@@ -198,6 +211,7 @@ void ChonMucDoChoi(int& level) {
 }
 
 void CheDoCoDien(int& level, int& score, vector<HighScoreEntry>& highscore) {
+    DemNguocBatDau();
     XoaConTro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
@@ -251,6 +265,7 @@ void CheDoCoDien(int& level, int& score, vector<HighScoreEntry>& highscore) {
 }
 
 void CheDoTuDo(int& level, int& score, vector<HighScoreEntry>& highscore) {
+    DemNguocBatDau();
     XoaConTro();
     srand(time(0)); // Khởi tạo seed cho hàm rand
     CONRAN r;
