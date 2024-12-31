@@ -321,14 +321,15 @@ void FreeMode(int& level, int& score, vector<HighScoreEntry>& highscore) {
     }
 }
 
+
 void Blink(SNAKE& r) {
-    for (int i = 0; i < 3; i++) {
+    bool visible = true;
+    for (int i = 0; i < 6; i++) {
         for (int j = 0; j < r.length; j++) {
             GoToXY(r.body[j].x, r.body[j].y);
-            cout << " ";
+            cout << (visible ? " " : "O");
         }
-        Sleep(500);
-        r.Ve();
+        visible = !visible;
         Sleep(500);
     }
 }
